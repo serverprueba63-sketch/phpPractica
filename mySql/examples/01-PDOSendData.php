@@ -21,9 +21,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $population = $_POST['population'];
 
 
-        $sqlInsert = "INSERT INTO city (Name, CountryCode, Population) VALUES ('" . $nameCity . "', '" . $countryCode . "'," . $population . ")";
+        $sqlInsert = "INSERT INTO city (Name, CountryCode, Population) VALUES (:nameCity, :countryCode, :population)";
 
-        $connection -> exec($sqlInsert);
+        $stm = $connection -> prepare($sqlInsert);
+
+        $stm -> bindParam(":nameCity", $nameCity, PDO::PARAM_STR);
+        $stm -> bindParam(":countryCode",$countryCode, PDO::PARAM_STR);
+        $stm -> bindParam(":population", $population, PDO::PARAM_INT);
+
+        $stm -> execute();
         echo "<br>Record Inserted";
 
     } catch (PDOException $e) {
